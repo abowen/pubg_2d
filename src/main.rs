@@ -1,4 +1,5 @@
 use macroquad::prelude::*;
+use cgmath::*;
 
 #[macroquad::main("PUBG 2D")]
 async fn main() {
@@ -7,11 +8,13 @@ async fn main() {
     let mut player_health: i32 = 100;
     let mut player_ammo: i32 = 60;
 
-    // TODO: replace with vector2
-    let mut player_target_x: f32 = 100.0;
-    let mut player_target_y: f32 = screen_height() - 50.0;
-    let mut player_x: f32 = player_target_x;
-    let mut player_y: f32 = player_target_y;
+    // TODO: replace with structure of vector2, health, ammo, etc
+    let mut player_target: Vector2<f32> = Vector2::new(100.0, screen_height() - 50.0);
+    let mut player_x: f32 = player_target.x;
+    let mut player_y: f32 = player_target.y;
+
+    let mut enemy_x: f32 = screen_width() - 50.0;
+    let mut enemy_y: f32 = 100.0;
 
     loop {
         clear_background(BLACK);
@@ -38,14 +41,14 @@ async fn main() {
         }
 
         // Players
-        if player_target_x > player_x {
+        if player_target.x > player_x {
             player_x += player_speed;
-        } else if player_target_x < player_x {
+        } else if player_target.x < player_x {
             player_x -= player_speed;
         }
-        if player_target_y > player_y {
+        if player_target.y > player_y {
             player_y += player_speed;
-        } else if player_target_y < player_y {
+        } else if player_target.y < player_y {
             player_y -= player_speed;
         }
 
@@ -54,11 +57,26 @@ async fn main() {
         if is_mouse_button_pressed(MouseButton::Left) {
             let mouse_position = mouse_position();
             draw_circle(mouse_position.0, mouse_position.1, 5.0, RED);
-            player_target_x = mouse_position.0;
-            player_target_y = mouse_position.1;
+            player_target.x = mouse_position.0;
+            player_target.y = mouse_position.1;
         }
 
+        // Enemies
+        if enemy_x > player_x {
+            enemy_x -= player_speed;
+        } else if enemy_x < player_x {
+            enemy_x += player_speed;
+        }
+        if enemy_y > player_y {
+            enemy_y -= player_speed;
+        } else if enemy_y < player_y {
+            enemy_y += player_speed;
+        }
+        // TODO: Normalize the x/y directions
 
+        draw_circle(enemy_x, enemy_y, 5.0, GRAY);
+
+        // UI
         if is_key_pressed(KeyCode::Q){
             break;
         }
