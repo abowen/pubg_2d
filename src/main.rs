@@ -13,12 +13,12 @@ async fn main() {
     let mut player: Vector2<f32> = Vector2::new(player_target.x, player_target.y);
     let mut enemy: Vector2<f32> = Vector2::new(screen_width() - 50.0, 100.0);
 
+    // https://doc.rust-lang.org/std/vec/struct.Vec.html
+    let mut bullets: Vec<Bullet> = Vec::new();
+
     loop {
         clear_background(BLACK);
 
-        // draw_line(40.0, 40.0, 100.0, 200.0, 15.0, BLUE);
-        // draw_rectangle(screen_width() / 2.0 - 60.0, 100.0, 120.0, 60.0, GREEN);
-        // draw_circle(screen_width() - 30.0, screen_height() - 30.0, 15.0, YELLOW);
         draw_text("PLAYER 1", 20.0, 20.0, 20.0, LIGHTGRAY);
         draw_text("- HEALTH", 20.0, 40.0, 20.0, LIGHTGRAY);
         draw_text("- AMMO  ", 20.0, 60.0, 20.0, LIGHTGRAY);
@@ -35,6 +35,15 @@ async fn main() {
 
         if is_key_pressed(KeyCode::Space) {
             player_ammo -= 1;
+            bullets.push(Bullet {
+                position: player,
+                direction: player_target - player
+            });
+        }
+
+        for bullet in &mut bullets {
+            draw_circle(bullet.position.x, bullet.position.y, 2.0, RED);
+            bullet.position += bullet.direction.normalize() * 2.0;
         }
 
         // Players
@@ -82,4 +91,10 @@ async fn main() {
 
         next_frame().await
     }
+}
+
+// https://doc.rust-lang.org/book/ch05-01-defining-structs.html
+struct Bullet{
+    position: Vector2<f32>,
+    direction: Vector2<f32>
 }
