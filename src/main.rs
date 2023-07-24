@@ -1,5 +1,6 @@
 use cgmath::*;
 use macroquad::prelude::*;
+use  macroquad::rand::*;
 
 #[macroquad::main("PUBG 2D")]
 async fn main() {
@@ -55,9 +56,12 @@ async fn main() {
                 }
             }
 
+            let x: f32 = gen_range(-10.0, 10.0);
+            let y: f32 = gen_range(-10.0, 10.0);
+
             bullets.push(Bullet {
                 position: player,
-                direction: closest_enemy.position - player,
+                direction: closest_enemy.position - player + Vector2::new(x, y),
                 collided: false,
                 shot_at: frame_t,
             });
